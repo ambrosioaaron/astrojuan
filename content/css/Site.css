@@ -21,6 +21,22 @@ textarea {
     color: #b94a48;
 }
 
+.bs-callout {
+    margin: 5px;
+    padding: 2px;
+}
+
+.bs-callout-danger {
+    background-color: #fdf7f7;
+}
+
+.bs-callout-danger h4 {
+    color: #d9534f;
+    padding: 0px 0px 0px 0px;
+    margin: 0px;
+    text-align: center;
+}
+
 .field-validation-valid {
     display: none;
 }
@@ -70,4 +86,25 @@ input[type="checkbox"].input-validation-error {
 .homeFeatured > p
 {
 	height: 60px;
+}
+
+#frmLogin
+{
+    width: 220px;
+}
+
+#frmLogin .form-group .form-control
+{
+    width: 80%;
+    margin: 5px 0px 0px 22px;
+}
+
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus
+{
+	background-color: #23AF4E;
+}
+
+.astroBlock
+{
+    text-align: center;
 }

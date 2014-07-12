@@ -56,6 +56,7 @@ class MasterPage {
     public function show ( $content = array ( ) ) {
         // Get the content of the MasterPage and replace all matching tags with their
         // respective view file content.
+		$content['test'] = 'testval';
         $masterPage = $this->CI->load->view ( $this->masterPage, $content, true );
         foreach ( $this->contentPages as $tag => $content ) {
             $masterPage = str_replace ( '<mp:' . ucfirst ( strtolower ( $tag ) ) . ' />',

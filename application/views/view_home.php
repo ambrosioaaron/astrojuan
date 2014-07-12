@@ -1,5 +1,5 @@
 <div class="jumbotron">
-    <h1>JUANPOT</h1>
+    <h1>AstroJuan</h1>
     <p class="lead">Place website description here. Place website description here. Place website description here. </p>
     <p><a href="#" class="btn btn-success btn-large">Learn more &raquo;</a></p>
 </div>

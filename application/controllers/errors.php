@@ -6,7 +6,7 @@ class Errors extends CI_Controller
 	{
 		$data['title'] = "Error";
 		
-		$this->masterpage->setMasterPage ('juanpot_master');
+		$this->masterpage->setMasterPage ('astrojuan_master');
         $this->masterpage->addContentPage ('view_error', 'content');
 
         $this->masterpage->show($data);
@@ -16,7 +16,7 @@ class Errors extends CI_Controller
 	{
 		$data['title'] = "Error 404";
 		
-		$this->masterpage->setMasterPage ('juanpot_master');
+		$this->masterpage->setMasterPage ('astrojuan_master');
         $this->masterpage->addContentPage ('view_error_notfound', 'content');
 
         $this->masterpage->show($data);

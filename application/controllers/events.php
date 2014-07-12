@@ -6,7 +6,7 @@ class Events extends CI_Controller
 	{
 		$data['title'] = "Events";
 		
-		$this->masterpage->setMasterPage ('juanpot_master');
+		$this->masterpage->setMasterPage ('astrojuan_master');
         $this->masterpage->addContentPage ('view_events', 'content');
 
         $this->masterpage->show($data);

@@ -6,7 +6,7 @@ class Articles extends CI_Controller
 	{
 		$data['title'] = "Articles";
 		
-		$this->masterpage->setMasterPage ('juanpot_master');
+		$this->masterpage->setMasterPage ('astrojuan_master');
         $this->masterpage->addContentPage ('view_articles', 'content');
 
         $this->masterpage->show($data);

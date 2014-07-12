@@ -1,3 +1,3 @@
 <div class="jumbotron">
-    <h2>About JuanPot</h2>
+    <h2>About AstroJuan</h2>
 </div>

@@ -6,9 +6,11 @@ class Home extends CI_Controller
 	{
 		$data['title'] = "Home";
 		
-		$this->masterpage->setMasterPage ('juanpot_master');
+		$this->masterpage->setMasterPage ('astrojuan_master');
         $this->masterpage->addContentPage ('view_home', 'content');
 
         $this->masterpage->show($data);
+				
+		
 	}
 }
