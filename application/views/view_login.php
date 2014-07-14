@@ -1,6 +1,6 @@
 <?php if(isset($validLogin) && $validLogin){ ?>
 
-	<li class="aj-navbar-li" id="aj-navbar-username"><a href="#">Welcome, </a></li>
+	<li class="aj-navbar-li" id="aj-navbar-username"><a href="#">Welcome, <?php echo $display_name; ?></a></li>
     <li class="aj-navbar-li dropdown" id="aj-navbar-logout">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account<span class="caret"></span></a>
         <ul class="dropdown-menu">
@@ -18,7 +18,7 @@
     </li>
     
     <li class="aj-navbar-li dropdown <?php if (isset($validLogin) && !$validLogin){ echo "open"; }?>">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login<span class="caret"></span></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="aj-li-Login">Login<span class="caret"></span></a>
         <?php
                     
             echo form_open('/account/login', $formAttr);

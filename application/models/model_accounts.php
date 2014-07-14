@@ -19,7 +19,7 @@ class Model_accounts extends CI_Model
 	
 	public function insert($new_account)
 	{
-		
+		$this->db->insert('Accounts', $new_account);
 	}
 	
 	public function get_account_info($id, $email)

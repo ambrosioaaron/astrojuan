@@ -51,7 +51,7 @@ class Account extends CI_Controller
 			if($this->form_validation->run() && $data['validLogin'])
 			{
 				$account_info = $this->model_accounts->get_account_info_by_email($this->input->post('email'));
-				
+				$data['display_name'] = $account_info['DisplayName'];
 				$cookie_account_id = array(
 				'name'  => md5('account_id' . $this->config->item('cookie_key')),
 				'value'  => $account_info['AccountId'],
@@ -82,10 +82,10 @@ class Account extends CI_Controller
 			if(!empty($account_id) && !empty($account_email))
 			{
 				$account_info = $this->model_accounts->get_account_info($account_id,$account_email);
-				
 				if($account_info != false)
 				{
 					$data['validLogin'] = $account_info;
+					$data['display_name'] = $account_info['DisplayName'];
 				}
 			}
 			
@@ -219,12 +219,17 @@ class Account extends CI_Controller
 				$new_account = array(
 					'DisplayName'=>$this->input->post('display_name'),
 					'Email'=>$this->input->post('email_address'),
-					'Password'=>$this->input->post('user_password')
+					'Password'=>md5($this->input->post('user_password')),
+					'CreateDate'=>date('Y-m-d H:i:s'),
+					'AccessCode'=>1
 				);
 				
 				$this->model_accounts->insert($new_account);
 				
-                echo "success";
+                $this->masterpage->setMasterPage ('astrojuan_master');
+				$this->masterpage->addContentPage ('view_register_success', 'content', $data);
+		
+				$this->masterpage->show($data);
             }
             else{
                 $data['validation_errors'] = array(
@@ -264,22 +269,10 @@ class Account extends CI_Controller
 	
 	public function test()
 	{
-		$this->load->helper('captcha');
-		$original_string = array_merge(range(0,9), range('a','z'), range('A', 'Z'));
-        $original_string = implode("", $original_string);
-        $captcha = substr(str_shuffle($original_string), 0, 8);
-		$vals = array(
-			'word'	 => $captcha,
-			'img_path'	 => './captcha/',
-			'img_url'	 => 'http://localhost:88/captcha/',
-			'font_path'	 => './content/font/Hobo.ttf',
-			'img_width'	 => '150',
-			'img_height' => 50,
-			'expiration' => 1800
-			);
+		$this->masterpage->setMasterPage ('astrojuan_master');
+				$this->masterpage->addContentPage ('view_register_success', 'content');
 		
-		$cap = create_captcha($vals);
-		echo $cap['image'];
+				$this->masterpage->show();
 	}
 	
 	public function validate_captcha()
