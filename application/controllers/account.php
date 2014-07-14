@@ -58,7 +58,7 @@ class Account extends CI_Controller
 				'expire' => '86500',
 				);
 				
-				$this->input->set_cookie($cookie_account_id);		
+				$this->input->set_cookie($cookie_account_id);	
 				
 				$cookie_account_email = array(
 				'name'  => md5('account_email' . $this->config->item('cookie_key')),
@@ -96,6 +96,32 @@ class Account extends CI_Controller
 	
 	public function register()
 	{
+		$this->load->helper('captcha');
+		
+		$original_string = array_merge(range(0,9), range('a','z'), range('A', 'Z'));
+        $original_string = implode("", $original_string);
+        $captcha = substr(str_shuffle($original_string), 0, 8);
+		$vals = array(
+			'word'	 => $captcha,
+			'img_path'	 => './captcha/',
+			'img_url'	 => base_url().'captcha/',
+			'font_path'	 => './content/font/HoboStd.otf',
+			'img_width'	 => '150',
+			'img_height' => 50,
+			'expiration' => 1800
+			);
+		
+		$cap = create_captcha($vals);
+		$data['captcha'] = $cap['image'];
+		
+		$cookie_captcha = array(
+		'name'  => md5('captcha' . $this->config->item('cookie_key')),
+		'value'  => md5($captcha . $this->config->item('cookie_key')),
+		'expire' => '1800',
+		);
+		
+		$this->input->set_cookie($cookie_captcha);
+				
 		$data['title'] = "Register";
 		
 		$data['formAttr'] = array(
@@ -154,6 +180,18 @@ class Account extends CI_Controller
 			'data-content'=>'Re-type your password'
 		);
 		
+		$data['captchaAttr'] = array(
+			'type'=>'text',
+			'class'=>'form-control',
+			'id'=>'captcha_input',
+			'name'=>'captcha_input',
+			'placeholder'=>'Captcha', 
+			'data-toggle'=>'popover',
+			'data-trigger'=>'focus',
+			'data-placement'=>'right',
+			'data-content'=>'Type the text above'
+		);
+		
 		if($this->input->post())
         {
             $this->load->library('form_validation');
@@ -164,15 +202,28 @@ class Account extends CI_Controller
 			$this->form_validation->set_message('matches', '%s did not match');
 			$this->form_validation->set_message('min_length', '%s too short');
 			$this->form_validation->set_message('max_length', '%s too long');
-			$this->form_validation->set_message('alpha_numeric', '%s may only contain alpha-numeric characters.');
+			$this->form_validation->set_message('alpha_numeric', '%s may only contain alpha-numeric characters');
+			$this->form_validation->set_message('validate_captcha', 'Wrong %s code');
 			
-			$this->form_validation->set_rules('display_name', 'Display Name', 'alpha_numeric|required|min_length[6]|max_length[20]|is_unique[Accounts.DisplayName]');
+			$this->form_validation->set_rules('display_name', 'Display Name', 'trim|xss_clean|alpha_numeric|required|min_length[6]|max_length[20]|is_unique[Accounts.DisplayName]');
 			$this->form_validation->set_rules('user_password', 'Password', 'required|min_length[6]|max_length[20]|required|matches[confirm_password]');
 			$this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required');
-			$this->form_validation->set_rules('email_address', 'Email', 'required|valid_email|is_unique[Accounts.Email]');
+			$this->form_validation->set_rules('email_address', 'Email', 'trim|xss_clean|required|valid_email|is_unique[Accounts.Email]');
+			$this->form_validation->set_rules('captcha_input', 'Captcha', 'trim|xss_clean|required|callback_validate_captcha');
+			
+			$data['displayNameAttr']['value'] = $this->input->post('display_name');
+			$data['emailAddressAttr']['value'] = $this->input->post('email_address');
 			
 			if($this->form_validation->run())
 			{
+				$new_account = array(
+					'DisplayName'=>$this->input->post('display_name'),
+					'Email'=>$this->input->post('email_address'),
+					'Password'=>$this->input->post('user_password')
+				);
+				
+				$this->model_accounts->insert($new_account);
+				
                 echo "success";
             }
             else{
@@ -180,10 +231,10 @@ class Account extends CI_Controller
 					'confirm_password'=>form_error('confirm_password'),
 					'user_password'=>form_error('user_password'),
 					'email_address'=>form_error('email_address'),
-					'display_name'=>form_error('display_name')
-					
+					'display_name'=>form_error('display_name'),
+					'captcha_input'=>form_error('captcha_input')
 				);
-	
+				
 				$this->masterpage->setMasterPage ('astrojuan_master');
 				$this->masterpage->addContentPage ('view_register', 'content', $data);
 		
@@ -198,22 +249,6 @@ class Account extends CI_Controller
         }
 	}
 	
-	public function add()
-	{
-		$this->load->library('form_validation');
-		$this->load->model('model_accounts');
-		
-		$this->form_validation->set_rules('display_name', 'Display Name', 'alpha_numeric|required|min_length[6]|max_length[20]|is_unique[Accounts.DisplayName]');
-		$this->form_validation->set_rules('user_password', 'Password', 'required|min_length[6]|max_length[20]|required|matches[confirm_password]');
-		$this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|min_length[6]|max_length[20]|required');
-		$this->form_validation->set_rules('email_address', 'Email', 'required|valid_email|is_unique[Accounts.Email]');
-		
-		if($this->form_validation->run())
-		{
-			echo "success";
-		}
-	}
-	
 	public function logout()
 	{
 		delete_cookie(md5('account_id' . $this->config->item('cookie_key')));
@@ -225,5 +260,36 @@ class Account extends CI_Controller
         $this->masterpage->addContentPage ('view_home', 'content');
 
         $this->masterpage->show($data);
+	}
+	
+	public function test()
+	{
+		$this->load->helper('captcha');
+		$original_string = array_merge(range(0,9), range('a','z'), range('A', 'Z'));
+        $original_string = implode("", $original_string);
+        $captcha = substr(str_shuffle($original_string), 0, 8);
+		$vals = array(
+			'word'	 => $captcha,
+			'img_path'	 => './captcha/',
+			'img_url'	 => 'http://localhost:88/captcha/',
+			'font_path'	 => './content/font/Hobo.ttf',
+			'img_width'	 => '150',
+			'img_height' => 50,
+			'expiration' => 1800
+			);
+		
+		$cap = create_captcha($vals);
+		echo $cap['image'];
+	}
+	
+	public function validate_captcha()
+	{
+		if(md5($this->input->post('captcha_input') . $this->config->item('cookie_key')) != $this->input->cookie(md5('captcha' . $this->config->item('cookie_key')), TRUE))
+		{
+			return false;
+		}else
+		{
+			return true;
+		}
 	}
 }

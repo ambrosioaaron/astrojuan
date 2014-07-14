@@ -1,23 +1,6 @@
 <div class="jumbotron">
-    <!--<form role="form" class="form-horizontal" id="frmRegister" name="Register" method="post" action="/account/register/">
-		<div class="form-group">
-            
-            <input type="text" class="form-control" id="display_name" name="display_name" placeholder="Display Name" data-toggle="popover" data-trigger="focus" data-placement="right" data-content="Letters and numbers only" />
-        
-            <input type="text" class="form-control" id="email_address" name="email_address" placeholder="Email Address"  data-toggle="popover" data-trigger="focus" data-placement="right" data-content="Enter a your email address" />
-            
-            <input type="password" class="form-control" id="user_password" name="user_password" placeholder="Password" data-toggle="popover" data-trigger="focus" data-placement="right" data-content="6 to 20 characters only" />
-            
-            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm password"  data-toggle="popover" data-trigger="focus" data-placement="right" data-content="Re-type your password" />
-            
-            <input type="submit" value="Register" class="form-control btn btn-success btn-sm"/>
-        
-		</div>
-        
-	</form>-->
     
     <?php
-                    
 		echo form_open('/account/register', $formAttr);
 	?>
 	<div class="form-group">
@@ -26,7 +9,8 @@
 		echo form_input($emailAddressAttr);
 		echo form_password($userPassswordAttr);
 		echo form_password($confirmPasswordAttr);
-	
+		echo $captcha;
+		echo form_input($captchaAttr);
 	?>
 	<input type="submit" value="Register" class="form-control btn btn-success btn-sm"/>
 	</div>
@@ -78,19 +62,22 @@ $(document).ready(function(){
 	$('#email_address').popover();
 	$('#user_password').popover();
 	$('#confirm_password').popover();
+	$('#captcha_input').popover();
 	
 	<?php
 	
 		if (isset($validation_errors))
 		{
-			while ($error = current($validation_errors)) {
-			?>
-			
-			$('#<?php echo key($validation_errors); ?>').attr('data-content', '<?php str_replace(array('<p>','</p>'),'',$error); ?>');
-			$('#<?php echo key($validation_errors); ?>').focus();
-			
-			<?php
-				next($validation_errors);
+			foreach ($validation_errors as $key=>$value) {
+				if($value != '')
+				{
+					?>
+					
+					$('#<?php echo $key; ?>').attr('data-content', '<?php echo str_replace(array('<p>','</p>'),'',$value); ?>');
+					$('#<?php echo $key; ?>').focus();
+					
+					<?php
+				}
 			}
         }
 	

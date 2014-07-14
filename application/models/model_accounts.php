@@ -17,6 +17,11 @@ class Model_accounts extends CI_Model
 		}
 	}
 	
+	public function insert($new_account)
+	{
+		
+	}
+	
 	public function get_account_info($id, $email)
 	{
 		$this->db->where('AccountId', $id);
