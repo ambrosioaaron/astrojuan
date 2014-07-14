@@ -1,15 +1,15 @@
 <?php if(isset($validLogin) && $validLogin){ ?>
 
-	<li class="ir-navbar-li" id="ir-navbar-username"><a href="#">Welcome, </a></li>
-    <li class="ir-navbar-li dropdown" id="ir-navbar-logout">
+	<li class="aj-navbar-li" id="aj-navbar-username"><a href="#">Welcome, </a></li>
+    <li class="aj-navbar-li dropdown" id="aj-navbar-logout">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account<span class="caret"></span></a>
         <ul class="dropdown-menu">
-            <li><a href="/Account/AccountProfile">Profile</a></li>
-            <li><a href="/Account/ChangePassword">Change Password</a></li>
+            <li><a href="/account/account_profile">Profile</a></li>
+            <li><a href="/account/change_password">Change Password</a></li>
         </ul>
     </li>
 
-    <li class="ir-navbar-li" id="ir-navbar-logout"><a href="/Account/Logout">Logout</a></li>
+    <li class="aj-navbar-li" id="aj-navbar-logout"><a href="/account/logout">Logout</a></li>
     
 <?php }else{ ?>
 

@@ -99,6 +99,11 @@ input[type="checkbox"].input-validation-error {
     margin: 5px 0px 0px 22px;
 }
 
+#frmRegister .form-group .form-control
+{
+    margin: 5px 0px 0px 0px;
+}
+
 .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus
 {
 	background-color: #23AF4E;

@@ -98,8 +98,131 @@ class Account extends CI_Controller
 	{
 		$data['title'] = "Register";
 		
+		$data['formAttr'] = array(
+			'role'=>'form',
+			'class'=>'form-horizontal',
+			'id'=>'frmRegister',
+			'name'=>'Register',
+			'method'=>'post'
+		);
+		
+		$data['displayNameAttr'] = array(
+			'type'=>'text',
+			'class'=>'form-control',
+			'id'=>'display_name',
+			'name'=>'display_name',
+			'placeholder'=>'Display Name',
+			'data-toggle'=>'popover',
+			'data-trigger'=>'focus',
+			'data-placement'=>'right',
+			'data-content'=>'Letters and numbers only'
+		);
+		
+		$data['emailAddressAttr'] = array(
+			'type'=>'text',
+			'class'=>'form-control',
+			'id'=>'email_address',
+			'name'=>'email_address',
+			'placeholder'=>'Email Address', 
+			'data-toggle'=>'popover',
+			'data-trigger'=>'focus',
+			'data-placement'=>'right',
+			'data-content'=>'Enter a your email address'
+		);
+		
+		$data['userPassswordAttr'] = array(
+			'type'=>'password',
+			'class'=>'form-control',
+			'id'=>'user_password',
+			'name'=>'user_password',
+			'placeholder'=>'Password',
+			'data-toggle'=>'popover',
+			'data-trigger'=>'focus',
+			'data-placement'=>'right',
+			'data-content'=>'6 to 20 characters only'
+		);
+		
+		$data['confirmPasswordAttr'] = array(
+			'type'=>'password',
+			'class'=>'form-control',
+			'id'=>'confirm_password',
+			'name'=>'confirm_password',
+			'placeholder'=>'Confirm password', 
+			'data-toggle'=>'popover',
+			'data-trigger'=>'focus',
+			'data-placement'=>'right',
+			'data-content'=>'Re-type your password'
+		);
+		
+		if($this->input->post())
+        {
+            $this->load->library('form_validation');
+			$this->load->model('model_accounts');
+			
+			$this->form_validation->set_message('required', '%s is required');
+			$this->form_validation->set_message('is_unique', '%s is already taken');
+			$this->form_validation->set_message('matches', '%s did not match');
+			$this->form_validation->set_message('min_length', '%s too short');
+			$this->form_validation->set_message('max_length', '%s too long');
+			$this->form_validation->set_message('alpha_numeric', '%s may only contain alpha-numeric characters.');
+			
+			$this->form_validation->set_rules('display_name', 'Display Name', 'alpha_numeric|required|min_length[6]|max_length[20]|is_unique[Accounts.DisplayName]');
+			$this->form_validation->set_rules('user_password', 'Password', 'required|min_length[6]|max_length[20]|required|matches[confirm_password]');
+			$this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required');
+			$this->form_validation->set_rules('email_address', 'Email', 'required|valid_email|is_unique[Accounts.Email]');
+			
+			if($this->form_validation->run())
+			{
+                echo "success";
+            }
+            else{
+                $data['validation_errors'] = array(
+					'confirm_password'=>form_error('confirm_password'),
+					'user_password'=>form_error('user_password'),
+					'email_address'=>form_error('email_address'),
+					'display_name'=>form_error('display_name')
+					
+				);
+	
+				$this->masterpage->setMasterPage ('astrojuan_master');
+				$this->masterpage->addContentPage ('view_register', 'content', $data);
+		
+				$this->masterpage->show($data);
+            }
+        }
+        else{
+            $this->masterpage->setMasterPage ('astrojuan_master');
+			$this->masterpage->addContentPage ('view_register', 'content', $data);
+	
+			$this->masterpage->show($data);
+        }
+	}
+	
+	public function add()
+	{
+		$this->load->library('form_validation');
+		$this->load->model('model_accounts');
+		
+		$this->form_validation->set_rules('display_name', 'Display Name', 'alpha_numeric|required|min_length[6]|max_length[20]|is_unique[Accounts.DisplayName]');
+		$this->form_validation->set_rules('user_password', 'Password', 'required|min_length[6]|max_length[20]|required|matches[confirm_password]');
+		$this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|min_length[6]|max_length[20]|required');
+		$this->form_validation->set_rules('email_address', 'Email', 'required|valid_email|is_unique[Accounts.Email]');
+		
+		if($this->form_validation->run())
+		{
+			echo "success";
+		}
+	}
+	
+	public function logout()
+	{
+		delete_cookie(md5('account_id' . $this->config->item('cookie_key')));
+		delete_cookie(md5('account_email' . $this->config->item('cookie_key')));
+		
+		$data['title'] = "Home";
+		
 		$this->masterpage->setMasterPage ('astrojuan_master');
-        $this->masterpage->addContentPage ('view_register', 'content', $data);
+        $this->masterpage->addContentPage ('view_home', 'content');
 
         $this->masterpage->show($data);
 	}
