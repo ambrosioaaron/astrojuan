@@ -30,7 +30,12 @@ class Model_accounts extends CI_Model
 		$query = $this->db->get('Accounts');
 		$data = $query->result_array();
 		
-		return $data[0];
+		if($query->num_rows() == 1)
+		{
+			return $data[0];
+		}else{
+			return false;
+		}
 	}
 	
 	public function get_account_info_by_email($email)

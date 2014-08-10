@@ -27,6 +27,7 @@ textarea {
 }
 
 .bs-callout-danger {
+	color: #d9534f;
     background-color: #fdf7f7;
 }
 
@@ -104,6 +105,11 @@ input[type="checkbox"].input-validation-error {
     margin: 5px 0px 0px 0px;
 }
 
+#frmPostTip .form-control
+{
+	min-width: 320px;
+}
+
 .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus
 {
 	background-color: #23AF4E;
@@ -112,4 +118,31 @@ input[type="checkbox"].input-validation-error {
 .astroBlock
 {
     text-align: center;
+}
+
+.astro-tip p
+{
+	
+	font-size: 16px;
+}
+
+.astro-article p
+{
+	
+	font-size: 16px;
+}
+
+.star-green
+{
+	color: #4CBB17;
+}
+
+.star-grey
+{
+	color: #999;
+}
+
+.astro-tip-row
+{
+	border-bottom: solid 1px #FFF;
 }

@@ -27,7 +27,7 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="/events/">Events</a></li>
                     <li><a href="/articles/">Articles</a></li>
-                    <li><a href="#">Store</a></li>
+                    <li><a href="/tips/">Tips</a></li>
                     <li><a href="/about/">About</a></li>
                 </ul>
 				<ul class="nav navbar-nav navbar-right" id="aj-navbar-login">
@@ -35,6 +35,9 @@
                 </ul>
             </div>
         </div>
+    </div>
+    <div style="text-align: center; padding: 10px 0px 10px 0px;">
+        <img src="<?php echo base_url();?>content/images/logo.png" />
     </div>
     <div class="container body-content">
         <mp:Content />
@@ -46,6 +49,10 @@
 	
     <script type="text/javascript">
         $(document).ready(function () {
+			<?php
+				if(empty($hideLogin)){
+			?>
+			
 			$.ajax({
 				 type: "GET",
 				 url: "<?php echo base_url();?>account/login/", 
@@ -56,6 +63,9 @@
 				}
 			});
 			
+			<?php
+				}
+			?>
 		});
     </script>
 </body>

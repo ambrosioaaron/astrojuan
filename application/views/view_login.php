@@ -1,6 +1,22 @@
 <?php if(isset($validLogin) && $validLogin){ ?>
 
-	<li class="aj-navbar-li" id="aj-navbar-username"><a href="#">Welcome, <?php echo $display_name; ?></a></li>
+    <?php if($access_code==1){ ?>
+    	<li class="aj-navbar-li dropdown" id="aj-navbar-logout">
+        	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="#">Users</a></li>
+                <li><a href="/admin/tips_review">Tips Review</a></li>
+            </ul>
+    	</li>
+    <?php } ?>
+    <li class="aj-navbar-li dropdown" id="aj-navbar-logout">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Posts<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li><a href="/account/tips/">Tips</a></li>
+            <li><a href="/account/articles/">Articles</a></li>
+             <li><a href="#">Events</a></li>
+        </ul>
+    </li>
     <li class="aj-navbar-li dropdown" id="aj-navbar-logout">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account<span class="caret"></span></a>
         <ul class="dropdown-menu">

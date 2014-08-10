@@ -1,22 +1,43 @@
 <div class="jumbotron">
-    
-    <?php
-		echo form_open('/account/register', $formAttr);
-	?>
-	<div class="form-group">
-	<?php
-		echo form_input($displayNameAttr);
-		echo form_input($emailAddressAttr);
-		echo form_password($userPassswordAttr);
-		echo form_password($confirmPasswordAttr);
-		echo $captcha;
-		echo form_input($captchaAttr);
-	?>
-	<input type="submit" value="Register" class="form-control btn btn-success btn-sm"/>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Create your account</h2>
+            <p>
+                Welcome to AstroJuan! By creating an account, you can:
+                <ul>
+                	<li>place text here</li>
+                    <li>place text here</li>
+                    <li>place text here</li>
+                    <li>place text here</li>
+                    <li>place text here</li>
+                    <li>place text here</li>
+                </ul>
+            </p>
+        </div>
+        
+        <div class="col-md-6">
+            <p>
+                <?php
+                    echo form_open('/account/register', $formAttr);
+                ?>
+                <div class="form-group">
+                <?php
+                    echo form_input($displayNameAttr);
+                    echo form_input($emailAddressAttr);
+                    echo form_password($userPassswordAttr);
+                    echo form_password($confirmPasswordAttr);
+                    echo $captcha;
+                    echo form_input($captchaAttr);
+                ?>
+                <input type="submit" value="Create account" class="form-control btn btn-success btn-sm"/>
+                </div>
+                <?php
+                    echo form_close();
+                ?>
+            </p>
+        </div>
+
 	</div>
-	<?php
-		echo form_close();
-	?>
 </div>
 
 <script type="text/javascript">
