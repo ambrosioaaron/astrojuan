@@ -21,6 +21,25 @@ class Admin extends CI_Controller
 		}
 	}
 	
+	public function article_review()
+	{	
+		if($this->validate_login())
+		{
+			$this->load->model('model_articles');
+			
+			$data['title'] = "Articles Review";
+
+			$data['articles'] = array_reverse($this->model_articles->get_all());
+			
+			$this->masterpage->setMasterPage ('astrojuan_master');
+			$this->masterpage->addContentPage ('view_admin_article_review', 'content', $data);
+	
+			$this->masterpage->show($data);
+		}else{
+			redirect("/", "refresh");
+		}
+	}
+	
 	public function tip_enable()
 	{
 		if($this->validate_login())
@@ -30,6 +49,20 @@ class Admin extends CI_Controller
 			$this->model_tips->tip_enable($this->input->get('tipid'));
 			
 			echo 'Tip Enabled';
+		}else{
+			echo 'Transaction Failed';
+		}
+	}
+	
+	public function article_enable()
+	{
+		if($this->validate_login())
+		{		
+			$this->load->model('model_articles');
+			
+			$this->model_articles->article_enable($this->input->get('articleid'));
+			
+			echo 'Article Enabled';
 		}else{
 			echo 'Transaction Failed';
 		}

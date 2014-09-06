@@ -1,5 +1,14 @@
 <script type="text/javascript" src="<?php echo base_url();?>content/js/tinymce/tinymce.min.js"></script>
 <script type="text/javascript">
+
+$(document).ready(function (){
+	$('#frmPostArticle').submit(function(){
+		$('#article_content').val(tinyMCE.get('article_content').getContent());
+		
+		return true;
+	});
+});
+
 tinymce.init({
     selector: "textarea",
     theme: "modern",
@@ -74,16 +83,24 @@ tinymce.init({
 					}
 				}
 				
+				echo "Title: <br/><br/> ";
+				echo form_input($article_title);
+				echo "<br/><br/> Short Description: <br/><br/> ";
+				echo form_input($article_desc);
+				echo "<br/> <br/> Content: <br/><br/> ";
 				echo form_textarea($article_content);
+				
 				?>
-                       
-                       
                 
                 <?php
 				echo '<br/>';
-				
-				//echo form_submit($btn_submit);
-				
+				?>
+                <div style="text-align: center;">
+            	<?php
+				echo form_submit($btn_submit);
+				?>
+                </div>
+            	<?php
 				echo form_close();
 			?>
         </div>
@@ -102,7 +119,7 @@ tinymce.init({
 					{
 				?>
                 	<tr>
-                    	<td class="cold-md-7 astro-article"><p><?php echo $article['ArticleContent']; ?></p></td>
+                    	<td class="cold-md-7 astro-article"><p><?php echo $article['ArticleTitle']; ?></p></td>
                         <td class="cold-md-3"><?php echo $article['Status']; ?></td>
                         <td class="cold-md-1">
                         <button class="btn btn-default" href="#"><span class="glyphicon glyphicon-pencil"></span></button>
@@ -120,9 +137,3 @@ tinymce.init({
     </div>
     
 </div>
-
-<script type="text/javascript">
-if (document.location.protocol == 'file:') {
-	alert("The examples might not work properly on the local file system due to security settings in your browser. Please use a real webserver.");
-}
-</script>

@@ -366,6 +366,20 @@ class Account extends CI_Controller
 				'method'=>'post',
 			);
 			
+			$data['article_title'] = array(
+				
+				'id'=>'article_title',
+				'name'=>'article_title',
+				'style'=>'min-width: 100%;'
+			);
+			
+			$data['article_desc'] = array(
+				
+				'id'=>'article_desc',
+				'name'=>'article_desc',
+				'style'=>'min-width: 100%;'
+			);
+			
 			$data['article_content'] = array(
 				
 				'id'=>'article_content',
@@ -392,18 +406,22 @@ class Account extends CI_Controller
 				$this->form_validation->set_message('max_length', '%s is too long');
 				
 				$this->form_validation->set_rules('article_content','Article Content','required|trim|max_length[60000]|xss_clean');
+				$this->form_validation->set_rules('article_title','Article Title','required|trim|max_length[420|xss_clean');
+				$this->form_validation->set_rules('article_desc','Article Short Description','required|trim|max_length[420|xss_clean');
 				
 				if($this->form_validation->run())
 				{	
-					$new_tip = array(
+					$new_article= array(
+						'ArticleTitle'=>$this->input->post('article_title'),
 						'ArticleContent'=>$this->input->post('article_content'),
+						'ArticleShortDesc'=>$this->input->post('article_desc'),
 						'ContentStatus'=>1,
 						'CreatedBy'=>$this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE),
 						'CreateDate'=>date('Y-m-d H:i:s'),
 						'LastUpdateBy'=>$this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE)
 					);
 					
-					$this->model_articles->insert($new_tip);
+					$this->model_articles->insert($new_article);
 				}else{
 					$data['validation_errors'] = array(
 						'article_content'=>form_error('article_content')

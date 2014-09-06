@@ -6,6 +6,7 @@
             <ul class="dropdown-menu">
                 <li><a href="#">Users</a></li>
                 <li><a href="/admin/tips_review">Tips Review</a></li>
+                <li><a href="/admin/article_review">Articles Review</a></li>
             </ul>
     	</li>
     <?php } ?>
