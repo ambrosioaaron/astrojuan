@@ -77,4 +77,9 @@ class Model_articles extends CI_Model
 	{
 		$this->db->insert('Articles', $new_article);
 	}
+	
+	public function update($tip)
+	{
+		$this->db->update('Articles', $tip, "ArticleId = ".$tip['ArticleId']);
+	}
 }

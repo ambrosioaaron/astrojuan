@@ -393,7 +393,6 @@ class Account extends CI_Controller
 						
 						$this->model_tips->update($new_tip);
 					}else{
-						echo "insert";
 						$this->model_tips->insert($new_tip);
 					}
 					
@@ -524,7 +523,7 @@ class Account extends CI_Controller
 				$this->form_validation->set_rules('captcha_input', 'Captcha', 'trim|xss_clean|callback_validate_captcha');
 				
 				if($this->form_validation->run())
-				{	
+				{
 					$new_article= array(
 						'ArticleTitle'=>$this->input->post('article_title'),
 						'ArticleContent'=>$this->input->post('article_content'),
@@ -535,7 +534,20 @@ class Account extends CI_Controller
 						'LastUpdateBy'=>$this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE)
 					);
 					
-					$this->model_articles->insert($new_article);
+					if((int)$this->input->post('article_id') > 0)
+					{
+						$new_article = array(
+							'ArticleContent'=>$this->input->post('article_content'),
+							'LastUpdateBy'=>$this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE),
+							'LastUpdate'=>date('Y-m-d H:i:s'),
+							'ArticleId'=>$this->input->post('article_id')
+						);
+						
+						$this->model_articles->update($new_article);
+					}else{
+						$this->model_articles->insert($new_article);
+					}
+					
 				}else{
 					$data['article_title']['value'] = $this->input->post('article_title');
 					$data['article_desc']['value'] = $this->input->post('article_desc');

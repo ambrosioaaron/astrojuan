@@ -21,10 +21,23 @@ $(document).ready(function (){
 				 {
 					 $('#article_title').val(data['ArticleTitle']);
 					 $('#article_desc').val(data['ArticleShortDesc']);
+					 $('#article_title').attr('readonly','true');
+					 $('#article_desc').attr('readonly','true');
 					 tinyMCE.get('article_content').setContent(data['ArticleContent']);
+					 $('.astro-article-edit-cancel').show();
 				 }
 			}
 		});
+	});
+	
+	$('.astro-article-edit-cancel').click(function(){
+		$('#article_title').val('');
+		$('#article_desc').val('');
+		$('#article_title').removeAttr('readonly');
+		$('#article_desc').removeAttr('readonly');
+		tinyMCE.get('article_content').setContent('');
+		$('#article_id').val(0);
+		$(this).hide();
 	});
 	
 	$('.astro-article-disable').click(function(){
