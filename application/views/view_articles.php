@@ -26,7 +26,7 @@
 			{
 			?>
             	</div>
-                <hr/>
+                <hr class="astro-hr"/>
             <?php
 			$n = 0;
 			}else{

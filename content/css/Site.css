@@ -146,3 +146,25 @@ input[type="checkbox"].input-validation-error {
 {
 	border-bottom: solid 1px #FFF;
 }
+
+.astro-article-row
+{
+	border-bottom: solid 1px #FFF;
+}
+
+.astro-tip-edit-cancel
+{
+	width: 100%;
+	display: none;
+}
+
+.astro-article-submit
+{
+	width: 45%;
+}
+
+.astro-article-edit-cancel
+{
+	width: 45%;
+	display: none;
+}

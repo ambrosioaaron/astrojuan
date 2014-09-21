@@ -23,6 +23,7 @@ class Model_articles extends CI_Model
 		->from('Articles AS ar')
 		->join('ContentStatus AS cs', 'ar.ContentStatus = cs.ContentStatusId', 'left')
 		->where('ar.CreatedBy', $account_id)
+		->where_in('ar.ContentStatus', array('1','2'))
 		->get();
 		
 		$data=$query->result_array();
@@ -58,10 +59,17 @@ class Model_articles extends CI_Model
 		return $data;
 	}
 	
-	public function article_enable($tip_id)
+	public function article_enable($article_id)
 	{
 		$data = array('ContentStatus'=>2);
-		$this->db->where('ArticleId',$tip_id);
+		$this->db->where('ArticleId',$article_id);
+		$this->db->update('Articles', $data);
+	}
+	
+	public function article_disable($article_id)
+	{
+		$data = array('ContentStatus'=>3);
+		$this->db->where('ArticleId',$article_id);
 		$this->db->update('Articles', $data);
 	}
 	

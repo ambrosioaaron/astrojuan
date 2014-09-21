@@ -7,6 +7,46 @@ $(document).ready(function (){
 		
 		return true;
 	});
+	
+	$('.astro-article-edit').click(function () {
+		$('.astro-article-tab-new').click();
+		$('#article_id').val($(this).data('article-id'));
+		
+		$.ajax({
+			 type: "GET",
+			 url: "<?php echo base_url();?>account/article_edit/", 
+			 data: { article_id: $(this).data('article-id'), article_owner_id: $(this).data('article-owner') },
+			 success: function(data){
+				 if(data!='Transaction Failed')
+				 {
+					 $('#article_title').val(data['ArticleTitle']);
+					 $('#article_desc').val(data['ArticleShortDesc']);
+					 tinyMCE.get('article_content').setContent(data['ArticleContent']);
+				 }
+			}
+		});
+	});
+	
+	$('.astro-article-disable').click(function(){
+		$(this).parent().parent().find('.astro-article-edit').hide();
+		$(this).parent().parent().find('.astro-article-disable').hide();
+		
+		var status_td = $(this).data('status-td');
+		$(this).attr('disabled', 'disabled');
+		$('#' + status_td).text('Updating...');
+		$.ajax({
+			 type: "GET",
+			 url: "<?php echo base_url();?>account/article_disable/", 
+			 data: { article_id: $(this).data('article-id'), article_owner_id: $(this).data('article-owner') },
+			 success: function(data){
+				 if(data!='Transaction Failed')
+				 {
+					 $('#' + status_td).text('Deleted');
+				 }
+			}
+		});
+	});
+	
 });
 
 tinymce.init({
@@ -57,7 +97,7 @@ tinymce.init({
 <div class="jumbotron">
 
 <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#new_article">New Article</a></li>
+    <li class="active"><a class='astro-article-tab-new' data-toggle="tab" href="#new_article">New Article</a></li>
     <li><a data-toggle="tab" href="#my_article_list">My Article List</a></li>
 </ul>
 	<div class="tab-content">
@@ -84,6 +124,7 @@ tinymce.init({
 				}
 				
 				echo "Title: <br/><br/> ";
+				echo form_input($article_id);
 				echo form_input($article_title);
 				echo "<br/><br/> Short Description: <br/><br/> ";
 				echo form_input($article_desc);
@@ -91,16 +132,21 @@ tinymce.init({
 				echo form_textarea($article_content);
 				
 				?>
-                
-                <?php
-				echo '<br/>';
-				?>
-                <div style="text-align: center;">
-            	<?php
-				echo form_submit($btn_submit);
-				?>
+                <br/>
+                <div class="row">
+                	<div class="col-md-2">
+                    	<?php echo $captcha; ?>
+                    </div>
+                    <div class="col-md-4">
+                    	<?php echo form_input($captchaAttr); ?>
+                    </div>
+                    <div class="col-md-6" style="text-align: right;">
+						<?php echo form_submit($btn_submit); ?>
+                        <input type="button" class="astro-article-edit-cancel btn btn-default" value="Cancel" />
+                    </div>
                 </div>
-            	<?php
+                
+				<?php
 				echo form_close();
 			?>
         </div>
@@ -120,12 +166,12 @@ tinymce.init({
 				?>
                 	<tr>
                     	<td class="cold-md-7 astro-article"><p><?php echo $article['ArticleTitle']; ?></p></td>
-                        <td class="cold-md-3"><?php echo $article['Status']; ?></td>
+                        <td class="cold-md-3" id="astro-article-status<?php echo $article['ArticleId']; ?>"><?php echo $article['Status']; ?></td>
                         <td class="cold-md-1">
-                        <button class="btn btn-default" href="#"><span class="glyphicon glyphicon-pencil"></span></button>
+                        <button class="btn btn-default astro-article-edit" href="#" data-article-owner="<?php echo $article['CreatedBy']; ?>" data-article-id="<?php echo $article['ArticleId']; ?>"><span class="glyphicon glyphicon-pencil"></span></button>
                         </td>
                         <td class="cold-md-1">
-                        <button class="btn btn-default" href="#"><span class="glyphicon glyphicon-ban-circle"></span></button>
+                        <button class="btn btn-default astro-article-disable" data-status-td="astro-article-status<?php echo $article['ArticleId']; ?>" data-article-owner="<?php echo $article['CreatedBy']; ?>" data-article-id="<?php echo $article['ArticleId']; ?>" href="#"><span class="glyphicon glyphicon-ban-circle"></span></button>
                         </td>
                     </tr>
                 <?php

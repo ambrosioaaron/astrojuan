@@ -54,6 +54,20 @@ class Admin extends CI_Controller
 		}
 	}
 	
+	public function tip_disable()
+	{
+		if($this->validate_login())
+		{
+			$this->load->model('model_tips');
+			
+			$this->model_tips->tip_disable($this->input->get('tip_id'));
+			
+			echo 'Tip Disabled';
+		}else{
+			echo "Transaction Failed";
+		}
+	}
+	
 	public function article_enable()
 	{
 		if($this->validate_login())
@@ -65,6 +79,20 @@ class Admin extends CI_Controller
 			echo 'Article Enabled';
 		}else{
 			echo 'Transaction Failed';
+		}
+	}
+	
+	public function article_disable()
+	{
+		if($this->validate_login())
+		{
+			$this->load->model('model_articles');
+			
+			$this->model_articles->article_disable($this->input->get('article_id'));
+			
+			echo 'Article Disabled';
+		}else{
+			echo "Transaction Failed";
 		}
 	}
 	

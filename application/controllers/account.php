@@ -101,7 +101,7 @@ class Account extends CI_Controller
 	{
 		$this->load->helper('captcha');
 		
-		$original_string = array_merge(range(0,9), range('a','z'), range('A', 'Z'));
+		$original_string = array_merge(range(0,9), range('A', 'Z'));
         $original_string = implode("", $original_string);
         $captcha = substr(str_shuffle($original_string), 0, 8);
 		$vals = array(
@@ -283,6 +283,32 @@ class Account extends CI_Controller
 	{
 		if($this->validate_login())
 		{
+			$this->load->helper('captcha');
+		
+			$original_string = array_merge(range(0,9), range('A', 'Z'));
+			$original_string = implode("", $original_string);
+			$captcha = substr(str_shuffle($original_string), 0, 8);
+			$vals = array(
+				'word'	 => $captcha,
+				'img_path'	 => './captcha/',
+				'img_url'	 => base_url().'captcha/',
+				'font_path'	 => './content/font/HoboStd.otf',
+				'img_width'	 => '150',
+				'img_height' => 50,
+				'expiration' => 1800
+				);
+			
+			$cap = create_captcha($vals);
+			$data['captcha'] = $cap['image'];
+			
+			$cookie_captcha = array(
+			'name'  => md5('captcha' . $this->config->item('cookie_key')),
+			'value'  => md5($captcha . $this->config->item('cookie_key')),
+			'expire' => '1800',
+			);
+			
+			$this->input->set_cookie($cookie_captcha);
+			
 			$data['title'] = "Tips";
 
 			$data['form_attribute'] = array(
@@ -291,6 +317,14 @@ class Account extends CI_Controller
 				'id'=>'frmPostTip',
 				'name'=>'frmPostTip',
 				'method'=>'post',
+			);
+			
+			$data['tip_id'] = array(
+				'class'=>'form-control',
+				'id'=>'tip_id',
+				'name'=>'tip_id',
+				'type'=>'hidden',
+				'value'=>'0'
 			);
 			
 			$data['tip_content'] = array(
@@ -305,10 +339,23 @@ class Account extends CI_Controller
 				'maxlength'=>'420'
 			);
 			
+			$data['captchaAttr'] = array(
+				'type'=>'text',
+				'class'=>'form-control',
+				'id'=>'captcha_input',
+				'name'=>'captcha_input',
+				'placeholder'=>'Captcha', 
+				'data-toggle'=>'popover',
+				'data-trigger'=>'focus',
+				'data-placement'=>'right',
+				'data-content'=>'Type the text above'
+			);
+			
 			$data['btn_submit'] = array(
 				'id'=>'tipSubmit',
-				'class'=>'form-control btn btn-success btn-sm',
+				'class'=>'btn btn-success btn-sm',
 				'name'=>'tipSubmit',
+				'style'=>'width: 100%;',
 				'value'=>'Submit'
 			);
 			
@@ -320,8 +367,10 @@ class Account extends CI_Controller
 				
 				$this->form_validation->set_message('required', 'You cannot post blank.');
 				$this->form_validation->set_message('max_length', '%s is too long. Maximum of 420 characters.');
+				$this->form_validation->set_message('validate_captcha', 'Wrong %s code');
 				
 				$this->form_validation->set_rules('tip_content','Tip Content','required|trim|max_length[420]|xss_clean');
+				$this->form_validation->set_rules('captcha_input', 'Captcha', 'trim|xss_clean|callback_validate_captcha');
 				
 				if($this->form_validation->run())
 				{	
@@ -333,10 +382,27 @@ class Account extends CI_Controller
 						'LastUpdateBy'=>$this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE)
 					);
 					
-					$this->model_tips->insert($new_tip);
+					if((int)$this->input->post('tip_id') > 0)
+					{
+						$new_tip = array(
+							'TipContent'=>$this->input->post('tip_content'),
+							'LastUpdateBy'=>$this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE),
+							'LastUpdate'=>date('Y-m-d H:i:s'),
+							'TipId'=>$this->input->post('tip_id')
+						);
+						
+						$this->model_tips->update($new_tip);
+					}else{
+						echo "insert";
+						$this->model_tips->insert($new_tip);
+					}
+					
 				}else{
+					$data['tip_id']['value'] = $this->input->post('tip_id');
+					$data['tip_content']['value'] = $this->input->post('tip_content');
 					$data['validation_errors'] = array(
-						'tip_content'=>form_error('tip_content')
+						'tip_content'=>form_error('tip_content'),
+						'captcha_input'=>form_error('captcha_input'),
 					);
 				}
 			}
@@ -356,6 +422,32 @@ class Account extends CI_Controller
 	{
 		if($this->validate_login())
 		{
+			$this->load->helper('captcha');
+		
+			$original_string = array_merge(range(0,9), range('A', 'Z'));
+			$original_string = implode("", $original_string);
+			$captcha = substr(str_shuffle($original_string), 0, 8);
+			$vals = array(
+				'word'	 => $captcha,
+				'img_path'	 => './captcha/',
+				'img_url'	 => base_url().'captcha/',
+				'font_path'	 => './content/font/HoboStd.otf',
+				'img_width'	 => '150',
+				'img_height' => 50,
+				'expiration' => 1800
+				);
+			
+			$cap = create_captcha($vals);
+			$data['captcha'] = $cap['image'];
+			
+			$cookie_captcha = array(
+			'name'  => md5('captcha' . $this->config->item('cookie_key')),
+			'value'  => md5($captcha . $this->config->item('cookie_key')),
+			'expire' => '1800',
+			);
+			
+			$this->input->set_cookie($cookie_captcha);
+			
 			$data['title'] = "Articles";
 
 			$data['form_attribute'] = array(
@@ -364,6 +456,14 @@ class Account extends CI_Controller
 				'id'=>'frmPostArticle',
 				'name'=>'frmPostArticle',
 				'method'=>'post',
+			);
+			
+			$data['article_id'] = array(
+				'class'=>'form-control',
+				'id'=>'article_id',
+				'name'=>'article_id',
+				'type'=>'hidden',
+				'value'=>'0'
 			);
 			
 			$data['article_title'] = array(
@@ -389,9 +489,21 @@ class Account extends CI_Controller
 				'style'=>'width: 100%;'
 			);
 			
+			$data['captchaAttr'] = array(
+				'type'=>'text',
+				'class'=>'form-control',
+				'id'=>'captcha_input',
+				'name'=>'captcha_input',
+				'placeholder'=>'Captcha', 
+				'data-toggle'=>'popover',
+				'data-trigger'=>'focus',
+				'data-placement'=>'right',
+				'data-content'=>'Type the text above'
+			);
+			
 			$data['btn_submit'] = array(
 				'id'=>'article_submit',
-				'class'=>'form-control btn btn-success btn-sm',
+				'class'=>'astro-article-submit btn btn-success',
 				'name'=>'article_submit',
 				'value'=>'Submit'
 			);
@@ -404,10 +516,12 @@ class Account extends CI_Controller
 				
 				$this->form_validation->set_message('required', 'You cannot post blank.');
 				$this->form_validation->set_message('max_length', '%s is too long');
+				$this->form_validation->set_message('validate_captcha', 'Wrong %s code');
 				
 				$this->form_validation->set_rules('article_content','Article Content','required|trim|max_length[60000]|xss_clean');
 				$this->form_validation->set_rules('article_title','Article Title','required|trim|max_length[420|xss_clean');
 				$this->form_validation->set_rules('article_desc','Article Short Description','required|trim|max_length[420|xss_clean');
+				$this->form_validation->set_rules('captcha_input', 'Captcha', 'trim|xss_clean|callback_validate_captcha');
 				
 				if($this->form_validation->run())
 				{	
@@ -423,8 +537,13 @@ class Account extends CI_Controller
 					
 					$this->model_articles->insert($new_article);
 				}else{
+					$data['article_title']['value'] = $this->input->post('article_title');
+					$data['article_desc']['value'] = $this->input->post('article_desc');
+					$data['article_content']['value'] = html_entity_decode($this->input->post('article_content'));
+					
 					$data['validation_errors'] = array(
-						'article_content'=>form_error('article_content')
+						'article_content'=>form_error('article_content'),
+						'captcha_input'=>form_error('captcha_input')
 					);
 				}
 			}
@@ -488,6 +607,63 @@ class Account extends CI_Controller
 		}
 		else{
 			return false;
+		}
+	}
+	
+	public function article_edit()
+	{
+		if($this->validate_owner($this->input->get('article_owner_id')))
+		{
+			$this->load->model('model_articles');
+			$article = $this->model_articles->get_article($this->input->get('article_id'));
+			
+			header('Content-Type: application/json');
+    		echo json_encode( $article );
+			
+		}else{
+			echo "Transaction Failed";
+		}
+	}
+	
+	public function tip_disable()
+	{
+		if($this->validate_owner($this->input->get('tip_owner_id')))
+		{
+			$this->load->model('model_tips');
+			
+			$this->model_tips->tip_disable($this->input->get('tip_id'));
+			
+			echo 'Tip Disabled';
+		}else{
+			echo "Transaction Failed";
+		}
+	}
+	
+	public function article_disable()
+	{
+		if($this->validate_owner($this->input->get('article_owner_id')))
+		{
+			$this->load->model('model_articles');
+			
+			$this->model_articles->article_disable($this->input->get('article_id'));
+			
+			echo 'Article Disabled';
+		}else{
+			echo "Transaction Failed";
+		}
+	}
+	
+	public function validate_owner($owner_id)
+	{
+		$this->load->model('model_accounts');
+		
+		$account_id = $this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE);
+		$account_email = $this->input->cookie(md5('account_email' . $this->config->item('cookie_key')), TRUE);
+			
+		if(!empty($account_id) && !empty($account_email))
+		{
+			$account_info = $this->model_accounts->get_account_info($account_id,$account_email);
+			return ($account_info['AccountId'] == $owner_id);
 		}
 	}
 	

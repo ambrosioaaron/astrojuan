@@ -23,6 +23,7 @@ class Model_tips extends CI_Model
 		->from('Tips AS t')
 		->join('ContentStatus AS cs', 't.ContentStatus = cs.ContentStatusId', 'left')
 		->where('t.CreatedBy', $account_id)
+		->where_in('t.ContentStatus',array('1','2'))
 		->get();
 		
 		$data=$query->result_array();
@@ -51,8 +52,20 @@ class Model_tips extends CI_Model
 		$this->db->update('Tips', $data);
 	}
 	
+	public function tip_disable($tip_id)
+	{
+		$data = array('ContentStatus'=>3);
+		$this->db->where('TipId',$tip_id);
+		$this->db->update('Tips', $data);
+	}
+	
 	public function insert($new_tip)
 	{
 		$this->db->insert('Tips', $new_tip);
+	}
+	
+	public function update($tip)
+	{
+		$this->db->update('Tips', $tip, "TipId = ".$tip['TipId']);
 	}
 }

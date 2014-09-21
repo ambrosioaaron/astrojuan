@@ -18,14 +18,13 @@ class Articles extends CI_Controller
 	
 	public function read()
 	{
+		$this->load->helper('security');
 		$this->load->helper('url');
 		$this->load->model('model_articles');
 		
-		
-		
-		if(!empty($this->input->get('articleid')))
+		if(!empty(xss_clean($_GET['articleid'])))
 		{
-			$article = $this->model_articles->get_article($this->input->get('articleid'));
+			$article = $this->model_articles->get_article(xss_clean($_GET['articleid']));
 			$data['title'] = $article['ArticleTitle'];
 			$data['article'] = $article;
 			
