@@ -417,6 +417,157 @@ class Account extends CI_Controller
 		}
 	}
 	
+	public function events()
+	{
+		if($this->validate_login())
+		{
+			$this->load->helper('captcha');
+		
+			$original_string = array_merge(range(0,9), range('A', 'Z'));
+			$original_string = implode("", $original_string);
+			$captcha = substr(str_shuffle($original_string), 0, 8);
+			$vals = array(
+				'word'	 => $captcha,
+				'img_path'	 => './captcha/',
+				'img_url'	 => base_url().'captcha/',
+				'font_path'	 => './content/font/HoboStd.otf',
+				'img_width'	 => '150',
+				'img_height' => 50,
+				'expiration' => 1800
+				);
+			
+			$cap = create_captcha($vals);
+			$data['captcha'] = $cap['image'];
+			
+			$cookie_captcha = array(
+			'name'  => md5('captcha' . $this->config->item('cookie_key')),
+			'value'  => md5($captcha . $this->config->item('cookie_key')),
+			'expire' => '1800',
+			);
+			
+			$this->input->set_cookie($cookie_captcha);
+			
+			$data['title'] = "Events";
+
+			$data['form_attribute'] = array(
+				'role'=>'form',
+				'class'=>'form-horizontal',
+				'id'=>'frmPostEvent',
+				'name'=>'frmPostEvent',
+				'method'=>'post',
+			);
+			
+			$data['event_id'] = array(
+				'class'=>'form-control',
+				'id'=>'event_id',
+				'name'=>'event_id',
+				'type'=>'hidden',
+				'value'=>'0'
+			);
+			
+			$data['event_title'] = array(
+				'id'=>'event_title',
+				'name'=>'event_title',
+				'placeholder'=>'Event title',
+				'class'=>'form-control',
+				'style'=>'min-width: 85%;'
+			);
+			
+			$data['event_banner'] = array(
+				'class'=>'form-control',
+				'id'=>'event_banner',
+				'name'=>'event_banner',
+				'placeholder'=>'Event banner URL',
+				'data-toggle'=>'popover',
+				'data-trigger'=>'focus',
+				'data-placement'=>'right',
+				'rows'=>'5',
+				'maxlength'=>'420'
+			);
+			
+			$data['captchaAttr'] = array(
+				'type'=>'text',
+				'class'=>'form-control',
+				'id'=>'captcha_input',
+				'name'=>'captcha_input',
+				'placeholder'=>'Captcha', 
+				'data-toggle'=>'popover',
+				'data-trigger'=>'focus',
+				'data-placement'=>'right',
+				'data-content'=>'Type the text above'
+			);
+			
+			$data['btn_submit'] = array(
+				'id'=>'eventSubmit',
+				'class'=>'btn btn-success btn-sm',
+				'name'=>'eventSubmit',
+				'style'=>'width: 100%;',
+				'value'=>'Submit'
+			);
+			
+			$this->load->model('model_events');
+			
+			if($this->input->post())
+			{	
+				$this->load->library('form_validation');
+				
+				$this->form_validation->set_message('required', 'You cannot post with blank %s');
+				$this->form_validation->set_message('max_length', '%s is too long. Maximum of 420 characters.');
+				$this->form_validation->set_message('validate_captcha', 'Wrong %s code');
+				
+				$this->form_validation->set_rules('event_title','Event Title','required|trim|max_length[420]|xss_clean');
+				$this->form_validation->set_rules('event_banner','Event Banner','required|trim|max_length[420]|xss_clean');
+				$this->form_validation->set_rules('captcha_input', 'Captcha', 'trim|xss_clean|callback_validate_captcha');
+				
+				if($this->form_validation->run())
+				{	
+					$new_event = array(
+						'EventTitle'=>$this->input->post('event_title'),
+						'EventBannerURL'=>$this->input->post('event_banner'),
+						'ContentStatus'=>1,
+						'CreatedBy'=>$this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE),
+						'CreateDate'=>date('Y-m-d H:i:s'),
+						'LastUpdateBy'=>$this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE)
+					);
+					
+					if((int)$this->input->post('event_id') > 0)
+					{
+						$new_event = array(
+							'EventTitle'=>$this->input->post('event_title'),
+							'EventContent'=>$this->input->post('event_banner'),
+							'LastUpdateBy'=>$this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE),
+							'LastUpdate'=>date('Y-m-d H:i:s'),
+							'EventId'=>$this->input->post('event_id')
+						);
+						
+						$this->model_events->update($new_event);
+					}else{
+						$this->model_events->insert($new_event);
+					}
+					
+				}else{
+					$data['event_id']['value'] = $this->input->post('event_id');
+					$data['event_title']['value'] = $this->input->post('event_title');
+					$data['event_banner']['value'] = $this->input->post('event_banner');
+					$data['validation_errors'] = array(
+						'event_title'=>form_error('event_title'),
+						'event_banner'=>form_error('event_banner'),
+						'captcha_input'=>form_error('captcha_input'),
+					);
+				}
+			}
+			
+			$data['events'] = array_reverse($this->model_events->get_account_events($this->input->cookie(md5('account_id' . $this->config->item('cookie_key')), TRUE)));
+			
+			$this->masterpage->setMasterPage ('astrojuan_master');
+			$this->masterpage->addContentPage ('view_account_events', 'content', $data);
+	
+			$this->masterpage->show($data);
+		}else{
+			redirect('/','refresh');
+		}
+	}
+	
 	public function articles()
 	{
 		if($this->validate_login())
@@ -458,7 +609,6 @@ class Account extends CI_Controller
 			);
 			
 			$data['article_id'] = array(
-				'class'=>'form-control',
 				'id'=>'article_id',
 				'name'=>'article_id',
 				'type'=>'hidden',
@@ -466,14 +616,16 @@ class Account extends CI_Controller
 			);
 			
 			$data['article_title'] = array(
-				
+				'class'=>'form-control',
+				'placeholder'=>'Article Title',
 				'id'=>'article_title',
 				'name'=>'article_title',
 				'style'=>'min-width: 100%;'
 			);
 			
 			$data['article_desc'] = array(
-				
+				'class'=>'form-control',
+				'placeholder'=>'Short Description',
 				'id'=>'article_desc',
 				'name'=>'article_desc',
 				'style'=>'min-width: 100%;'
@@ -646,6 +798,20 @@ class Account extends CI_Controller
 			$this->model_tips->tip_disable($this->input->get('tip_id'));
 			
 			echo 'Tip Disabled';
+		}else{
+			echo "Transaction Failed";
+		}
+	}
+	
+	public function event_disable()
+	{
+		if($this->validate_owner($this->input->get('event_owner_id')))
+		{
+			$this->load->model('model_events');
+			
+			$this->model_events->event_disable($this->input->get('event_id'));
+			
+			echo 'Event Disabled';
 		}else{
 			echo "Transaction Failed";
 		}

@@ -135,13 +135,11 @@ tinymce.init({
 						}
 					}
 				}
-				
-				echo "Title: <br/><br/> ";
 				echo form_input($article_id);
 				echo form_input($article_title);
-				echo "<br/><br/> Short Description: <br/><br/> ";
+				echo "<br/> ";
 				echo form_input($article_desc);
-				echo "<br/> <br/> Content: <br/><br/> ";
+				echo "<br/> ";
 				echo form_textarea($article_content);
 				
 				?>

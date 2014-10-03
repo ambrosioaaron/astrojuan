@@ -2,7 +2,7 @@
 <div class="jumbotron">
     <h1>AstroJuan</h1>
     <p class="lead">Place website description here. Place website description here. Place website description here. </p>
-    <p><a href="#" class="btn btn-success btn-large">Learn more &raquo;</a></p>
+    <p><a href="/about" class="btn btn-success btn-large">Learn more &raquo;</a></p>
 </div>
 
 <div class="row">

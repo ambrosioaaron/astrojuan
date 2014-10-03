@@ -158,6 +158,12 @@ input[type="checkbox"].input-validation-error {
 	display: none;
 }
 
+.astro-event-edit-cancel
+{
+	width: 100%;
+	display: none;
+}
+
 .astro-article-submit
 {
 	width: 45%;
@@ -167,4 +173,10 @@ input[type="checkbox"].input-validation-error {
 {
 	width: 45%;
 	display: none;
+}
+
+.astro-event p
+{
+	
+	font-size: 16px;
 }

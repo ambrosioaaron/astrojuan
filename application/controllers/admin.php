@@ -21,6 +21,25 @@ class Admin extends CI_Controller
 		}
 	}
 	
+	public function events_review()
+	{	
+		if($this->validate_login())
+		{
+			$this->load->model('model_events');
+			
+			$data['title'] = "Events Review";
+
+			$data['events'] = array_reverse($this->model_events->get_all());
+			
+			$this->masterpage->setMasterPage ('astrojuan_master');
+			$this->masterpage->addContentPage ('view_admin_events_review', 'content', $data);
+	
+			$this->masterpage->show($data);
+		}else{
+			redirect("/", "refresh");
+		}
+	}
+	
 	public function article_review()
 	{	
 		if($this->validate_login())
@@ -49,6 +68,34 @@ class Admin extends CI_Controller
 			$this->model_tips->tip_enable($this->input->get('tipid'));
 			
 			echo 'Tip Enabled';
+		}else{
+			echo 'Transaction Failed';
+		}
+	}
+	
+	public function event_disable()
+	{
+		if($this->validate_login())
+		{
+			$this->load->model('model_events');
+			
+			$this->model_events->event_disable($this->input->get('event_id'));
+			
+			echo 'Event Disabled';
+		}else{
+			echo "Transaction Failed";
+		}
+	}
+	
+	public function event_enable()
+	{
+		if($this->validate_login())
+		{		
+			$this->load->model('model_events');
+			
+			$this->model_events->event_enable($this->input->get('eventid'));
+			
+			echo 'Event Enabled';
 		}else{
 			echo 'Transaction Failed';
 		}

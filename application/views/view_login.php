@@ -5,6 +5,7 @@
         	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<span class="caret"></span></a>
             <ul class="dropdown-menu">
                 <li><a href="#">Users</a></li>
+                <li><a href="/admin/events_review">Events Review</a></li>
                 <li><a href="/admin/tips_review">Tips Review</a></li>
                 <li><a href="/admin/article_review">Articles Review</a></li>
             </ul>
@@ -13,9 +14,9 @@
     <li class="aj-navbar-li dropdown" id="aj-navbar-logout">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Posts<span class="caret"></span></a>
         <ul class="dropdown-menu">
+        	<li><a href="/account/events/">Events</a></li>
             <li><a href="/account/tips/">Tips</a></li>
             <li><a href="/account/articles/">Articles</a></li>
-             <li><a href="#">Events</a></li>
         </ul>
     </li>
     <li class="aj-navbar-li dropdown" id="aj-navbar-logout">
